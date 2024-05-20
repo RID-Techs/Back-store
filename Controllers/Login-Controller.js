@@ -1,4 +1,5 @@
 const User = require('../Models/Login-Model')
+const {google} = require("googleapis")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -41,4 +42,50 @@ const Login = async(req, res) => {
     }
 }
 
-module.exports = {Signup, Login}
+const REDIRECT_URI = 'http://localhost:9009/auth/google/callback';
+
+const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    REDIRECT_URI
+);
+
+const initiateGoogleLogin = async (req, res) => {
+    try {
+        const url = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'],
+        });
+        res.json({ url });
+    } catch (error) {
+        console.error('Error generating Google OAuth URL:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+const Google_cb = async (req, res) => {
+    try {
+    const code = req.query.code;
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+    const { data } = await oauth2.userinfo.get();
+
+    console.log(data)
+
+    // Generate JWT
+    const token = jwt.sign(data, process.env.ACCESS_TOKEN, { expiresIn: '1h' });
+    res.cookie("tokeno", token, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 360000
+    })
+    res.status(200).redirect("http://localhost:5173/store")
+    } catch (error) {
+        console.error('Error handling Google callback:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+module.exports = {Signup, Login, initiateGoogleLogin, Google_cb}
