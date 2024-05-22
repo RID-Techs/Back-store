@@ -29,20 +29,28 @@ const Login = async(req, res) => {
             return res.status(401).json({mesPass: 'Invalid Password'})
         }
 
-        res.status(200).json({
-            userId: user._id,
-            token: jwt.sign(
-                {userId: user._id},
-                process.env.ACCESS_TOKEN,
-                {expiresIn: "1800s"}
-            )
+        const token = jwt.sign({userId: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '2m' });
+        const RefreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN, {expiresIn: "1h"})
+    
+        res.cookie("tokeno", token, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 120000
         })
+    
+        res.cookie("RefreshTokeno", RefreshToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 3600000
+        })
+
+
     } catch (error) {
         return res.status(500).json({error})
     }
 }
 
-const REDIRECT_URI = 'http://localhost:9009/auth/google/callback';
+const REDIRECT_URI = 'https://back-store-mkge.onrender.com/auth/google/callback';
 
 const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
@@ -90,7 +98,7 @@ const Google_cb = async (req, res) => {
         maxAge: 3600000
     })
 
-    res.status(200).redirect("http://localhost:5173/store")
+    res.status(200).redirect("https://computers-store.netlify.app/store")
     } catch (error) {
         console.error('Error handling Google callback:', error);
         res.status(500).json({ error: 'Internal Server Error' });

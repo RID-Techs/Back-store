@@ -15,7 +15,7 @@ const Login_Routes = require('./Routes/Login-Routes')
 // });
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://computers-store.netlify.app',
     credentials: true
 }));
 
