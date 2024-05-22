@@ -72,15 +72,24 @@ const Google_cb = async (req, res) => {
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
 
-    console.log(data)
+    console.log("From Data :", data)
 
     // Generate JWT
-    const token = jwt.sign(data, process.env.ACCESS_TOKEN, { expiresIn: '1h' });
+    const token = jwt.sign(data, process.env.ACCESS_TOKEN, { expiresIn: '2m' });
+    const RefreshToken = jwt.sign(data, process.env.REFRESH_TOKEN, {expiresIn: "1h"})
+
     res.cookie("tokeno", token, {
         httpOnly: true,
         secure: false,
-        maxAge: 360000
+        maxAge: 120000
     })
+
+    res.cookie("RefreshTokeno", RefreshToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 3600000
+    })
+
     res.status(200).redirect("http://localhost:5173/store")
     } catch (error) {
         console.error('Error handling Google callback:', error);
@@ -88,4 +97,63 @@ const Google_cb = async (req, res) => {
     }
 }
 
-module.exports = {Signup, Login, initiateGoogleLogin, Google_cb}
+const Welcome = async (req, res) => {
+    try {
+        res.status(200).json({Mes: "Welcome dear User !"})
+    } catch (error) {
+        res.status(500).json({Message: "Sorry, Something went wrong !!"})
+    }
+}
+
+const RefreshEndPoint = async(req, res) => {
+    try {
+        const { RefreshTokeno } = req.cookies
+
+    if(!RefreshTokeno) {
+        return res.status(403).json({Refresh_Mes: "No Refresh Token found !"})
+    } else {
+        jwt.verify(RefreshTokeno, process.env.REFRESH_TOKEN, (err, user) => {
+            if(err) {
+                console.log("Token Verification", err)
+            } else {
+
+                const NewToken = jwt.sign({data: user}, process.env.ACCESS_TOKEN, {expiresIn: "2m"})
+
+                res.cookie("tokeno", NewToken, {
+                    httpOnly: true,
+                    secure: false,
+                    maxAge: 120000
+                })
+
+                res.status(200).json({ message: "Access token refreshed" });
+                
+            }
+        })
+    }
+    } catch (error) {
+        res.status(500).json({Mes: error})
+    }
+}
+
+
+const revokedTokens = new Set;
+
+const LogOut = async (req, res) => {
+    try {
+        const { tokeno, RefreshTokeno } = req.cookies;
+
+    revokedTokens.add(tokeno)
+    revokedTokens.add(RefreshTokeno)
+
+    res.clearCookie("tokeno")
+    res.clearCookie("RefreshTokeno")
+
+    res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        res.status(403).json({Mes: "No acess !"})
+    }
+
+}
+
+
+module.exports = {Signup, Login, initiateGoogleLogin, Google_cb, Welcome, RefreshEndPoint, LogOut, revokedTokens}
