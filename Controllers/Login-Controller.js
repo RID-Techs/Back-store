@@ -34,13 +34,13 @@ const Login = async(req, res) => {
     
         res.cookie("tokeno", token, {
             httpOnly: true,
-            secure: false,
+            secure: true,
             maxAge: 120000
         })
     
         res.cookie("RefreshTokeno", RefreshToken, {
             httpOnly: true,
-            secure: false,
+            secure: true,
             maxAge: 3600000
         })
 
@@ -67,7 +67,7 @@ const initiateGoogleLogin = async (req, res) => {
         res.json({ url });
     } catch (error) {
         console.error('Error generating Google OAuth URL:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ errorInit: error });
     }
 }
 
@@ -88,20 +88,20 @@ const Google_cb = async (req, res) => {
 
     res.cookie("tokeno", token, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         maxAge: 120000
     })
 
     res.cookie("RefreshTokeno", RefreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
         maxAge: 3600000
     })
 
     res.status(200).redirect("https://computers-store.netlify.app/store")
     } catch (error) {
         console.error('Error handling Google callback:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ errorCallb: error });
     }
 }
 
@@ -129,7 +129,7 @@ const RefreshEndPoint = async(req, res) => {
 
                 res.cookie("tokeno", NewToken, {
                     httpOnly: true,
-                    secure: false,
+                    secure: true,
                     maxAge: 120000
                 })
 
