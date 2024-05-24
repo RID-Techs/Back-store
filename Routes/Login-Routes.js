@@ -5,7 +5,7 @@ const checkAuth = require('../Middlewares/cookieAuth')
 const checkTokenAuth = require('../Middlewares/checkToken')
 const router = express.Router()
 
-router.post("/signup", Signup)
+router.post("/signup", Signup) 
 router.post("/login", Login)
 router.get("/google", initiateGoogleLogin)
 router.get("/google/callback", Google_cb)

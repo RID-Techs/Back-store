@@ -44,6 +44,7 @@ const Login = async(req, res) => {
             maxAge: 3600000
         })
 
+        res.status(200).json({Mes: "Welcome Dear !"})
 
     } catch (error) {
         return res.status(500).json({error})
