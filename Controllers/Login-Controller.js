@@ -145,10 +145,10 @@ const RefreshEndPoint = async(req, res) => {
 }
 
 
-const revokedTokens = new Set;
 
 const LogOut = async (req, res) => {
     try {
+        const revokedTokens = new Set;
         const { tokeno, RefreshTokeno } = req.cookies;
 
     revokedTokens.add(tokeno)
