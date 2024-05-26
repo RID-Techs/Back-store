@@ -17,7 +17,7 @@ const Signup = async(req, res) => {
     }
 }
 
-const Login = async(req, res) => {
+const Login = async (req, res) => {
     try {
         const user = await User.findOne({username: req.body.username})
 
@@ -38,11 +38,11 @@ const Login = async(req, res) => {
             maxAge: 120000
         })
     
-        res.cookie("RefreshTokeno", RefreshToken, {
-            httpOnly: true,
-            secure: true,
-            maxAge: 3600000
-        })
+        // res.cookie("RefreshTokeno", RefreshToken, {
+        //     httpOnly: true,
+        //     secure: true,
+        //     maxAge: 3600000
+        // })
 
         res.status(200).json({Mes: "Welcome Dear !"})
 
@@ -143,7 +143,6 @@ const RefreshEndPoint = async(req, res) => {
         res.status(500).json({Mes: error})
     }
 }
-
 
 
 const LogOut = async (req, res) => {
