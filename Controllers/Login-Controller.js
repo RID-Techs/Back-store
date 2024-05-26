@@ -30,7 +30,7 @@ const Login = async (req, res) => {
         }
 
         const token = jwt.sign({userId: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '2m' });
-        const RefreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN, {expiresIn: "1h"})
+        // const RefreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN, {expiresIn: "1h"})
     
         res.cookie("tokeno", token, {
             httpOnly: true,
@@ -145,23 +145,23 @@ const RefreshEndPoint = async(req, res) => {
 }
 
 
-const LogOut = async (req, res) => {
-    try {
-        const revokedTokens = new Set;
-        const { tokeno, RefreshTokeno } = req.cookies;
+// const LogOut = async (req, res) => {
+//     try {
+//         const revokedTokens = new Set;
+//         const { tokeno, RefreshTokeno } = req.cookies;
 
-    revokedTokens.add(tokeno)
-    revokedTokens.add(RefreshTokeno)
+//     revokedTokens.add(tokeno)
+//     revokedTokens.add(RefreshTokeno)
 
-    res.clearCookie("tokeno")
-    res.clearCookie("RefreshTokeno")
+//     res.clearCookie("tokeno")
+//     res.clearCookie("RefreshTokeno")
 
-    res.status(200).json({ message: 'Logout successful' });
-    } catch (error) {
-        res.status(403).json({Mes: "No acess !"})
-    }
+//     res.status(200).json({ message: 'Logout successful' });
+//     } catch (error) {
+//         res.status(403).json({Mes: "No acess !"})
+//     }
 
-}
+// }
 
 
 module.exports = {Signup, Login, initiateGoogleLogin, Google_cb, Welcome, RefreshEndPoint, LogOut, revokedTokens}
