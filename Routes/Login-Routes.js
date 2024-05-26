@@ -9,7 +9,7 @@ router.post("/signup", Signup)
 router.post("/login", Login)
 router.get("/google", initiateGoogleLogin)
 router.get("/google/callback", Google_cb)
-router.get("/welcome", checkAuth, checkTokenAuth, Welcome)
+router.get("/welcome", checkAuth, Welcome)
 router.post("/refreshtoken", RefreshEndPoint)
 router.post("/logout", checkAuth, LogOut)
 
