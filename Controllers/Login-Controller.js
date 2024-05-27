@@ -164,4 +164,4 @@ const RefreshEndPoint = async(req, res) => {
 // }
 
 
-module.exports = {Signup, Login, initiateGoogleLogin, Google_cb, Welcome, RefreshEndPoint, revokedTokens}
+module.exports = {Signup, Login, initiateGoogleLogin, Google_cb, Welcome, RefreshEndPoint}
