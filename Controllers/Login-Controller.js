@@ -29,12 +29,12 @@ const Login = async (req, res) => {
             return res.status(401).json({mesPass: 'Invalid Password'})
         }
 
-        const token = jwt.sign({userId: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '2m' });
         // const RefreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN, {expiresIn: "1h"})
+        const token = jwt.sign({userId: user._id}, process.env.ACCESS_TOKEN, { expiresIn: '2m' });
     
         res.cookie("tokeno", token, {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "lax",
             secure: true,
             maxAge: 120000
         })
