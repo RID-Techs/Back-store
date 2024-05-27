@@ -35,12 +35,14 @@ const Login = async (req, res) => {
         res.cookie("tokeno", token, {
             httpOnly: true,
             secure: true,
+            sameSite: "None",
             maxAge: 120000
         })
     
         // res.cookie("RefreshTokeno", RefreshToken, {
         //     httpOnly: true,
         //     secure: true,
+        // sameSite: "None",
         //     maxAge: 3600000
         // })
 
@@ -90,12 +92,14 @@ const Google_cb = async (req, res) => {
     res.cookie("tokeno", token, {
         httpOnly: true,
         secure: true,
+        sameSite: "None",
         maxAge: 120000
     })
 
     res.cookie("RefreshTokeno", RefreshToken, {
         httpOnly: true,
         secure: true,
+        sameSite: "None",
         maxAge: 3600000
     })
 
@@ -131,6 +135,7 @@ const RefreshEndPoint = async(req, res) => {
                 res.cookie("tokeno", NewToken, {
                     httpOnly: true,
                     secure: true,
+                    sameSite: "None",
                     maxAge: 120000
                 })
 
